@@ -4,22 +4,38 @@
 import Cookies from 'js-cookie'
 import {
     initChatData, receiveChatMsg, sendChatMsg, showRightType, showFriendInfo, authSuccess,
-    errMsg, userInfo,logOut, modifyUserContacts, getNewFriends, getMailList
+    errMsg, userInfo,logOut, modifyUserContacts, getNewFriends, getMailList, initUser
 } from './init'
-import { reqUserInfo } from '../api'
+import { reqUserInfo, reqLogin } from '../api'
 import {pySegSort} from '../utils'
 
 // 数据模拟
 import {user, contact} from '../config/initMain'
 import {mailList} from '../config/mailList'
 import {newFriend} from '../config/newFriend'
+import {websocket} from '../utils/websocket'
+import ajax from '../api/ajax'
 
 // 用户登录
 export const login = (username, password) => {
     return async dispatch => {
-        Cookies.set('token', username+password)
+        const response = await reqLogin({username, password})
+
+        const result = response.data
+        username = result.name
+        password = result.password
+
+        user.id = result.id
+        user.name = result.name
+
+        Cookies.set('token', user.id)
         dispatch(authSuccess(`欢迎你${username}`))
     }
+
+    // return async dispatch => {
+    //     Cookies.set('token', username+password)
+    //     dispatch(authSuccess(`欢迎你${username}`))
+    // }
 }
 
 // 退出登录
@@ -32,8 +48,11 @@ export const logout = () => {
 // 界面信息初始化
 export const initMain = token => {
     return async dispatch => {
-        dispatch(userInfo({userInfo: user, contacts: contact || []}))
-        // websocket(user)  // 这里可接入 socket
+        const response = await reqUserInfo(Cookies.get('token'))
+
+        const result = response.data
+        dispatch(userInfo({userInfo: result, contacts: contact || []}))
+        websocket(result)  // 这里可接入 socket
     }
 }
 

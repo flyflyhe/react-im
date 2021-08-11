@@ -9,8 +9,13 @@ class Contacts extends Component {
 
     state = { user_id: 0, index: 0 }
 
+    componentDidMount = () => {
+        console.log(this.props)
+    }
+
     render() {
         const {chat: {chatUserInfo: {id}}, user: {contacts}} = this.props
+
         const menu = <Menu>
             <Menu.Item key="1" onClick={() => this.handleMenuEvent('remove')}>移除会话</Menu.Item>
             <Menu.Item key="2" onClick={() => this.handleMenuEvent('show')}>发起会话</Menu.Item>

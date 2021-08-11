@@ -2,32 +2,37 @@ import { message as AM, notification } from 'antd'
 
 import store from '../redux/store'
 import { modifyContacts } from '../redux/actions'
+import message from '../pages/chat/message/message'
 
 let socket = null
 
 function websocket(user) {
-    socket = new WebSocket("ws://127.0.0.1:8008/im")
+    socket = new WebSocket("ws://127.0.0.1:9000")
     socket.onopen = () => {
         socket.send(JSON.stringify({
-            "type": "login",
-            "uuid": user.id.toString(),
-            "content": "Hello Go WebSocket",
-            "username": user.nickname
+            "event": "login",
+            "data": {"user":{"uid":user.id, "role":user.role}}
         }))
     }
 
     socket.onmessage = msg => {
         const data = JSON.parse(msg.data)
-        const { username, content, touuid } = data
         console.log(data)
-        switch (data.type) {
+        const touuid = ""
+        switch (data.event) {
             case "init":
                 break
             case "login":
                 //notification['success']({ message: `${data.username} 已连接` })
                 break
-            case "message":
+            case "send":
+                const { fromUser, toUser } = data.data
+                const content = data.data.msg
+                const username = fromUser.username
                 AM.success(`message：${username}: ${content}`)
+
+                var contacts = store.getState().user.contacts
+                store.dispatch(modifyContacts(contacts))
                 break
             case "private":
                 var contacts = store.getState().user.contacts
@@ -65,13 +70,14 @@ function websocket(user) {
 }
 
 // 发送好友消息
-const sendMsg = (msg, friend_id) => {
+const sendMsg = (msg, my_id, friend_id) => {
     console.log("sending msg:", msg)
     socket.send(JSON.stringify({
-        type: "friendMessage",
+        event: "send",
         data: {
-            to_uid: friend_id, // 好友的ID
-            message: msg
+            fromUser:{uid:my_id,username:""},
+            toUser:{uid:friend_id,username:""},
+            msg: msg.message
         }
     }))
 }

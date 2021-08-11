@@ -5,11 +5,13 @@ import {
     USERINFO, LOGOUT, MODIFY_USER_CONTACTS, GET_NEW_FRIENDS, GET_USER_MAILLIST
 } from './action-type'
 import {initUser, initChatInfo, friendInfo} from './init'
+import {sendMsg} from '../utils/websocket'
 
 // 当前登录的用户信息
 function user(state = initUser, action) {
     switch (action.type) {
         case AUTH_SUCCESS:
+            alert(JSON.stringify(state))
             return {...action.data, ...state, redirectTo: '/'}
         case USERINFO:
             const {userInfo, contacts} = action.data
@@ -53,6 +55,9 @@ function chat(state = initChatInfo, action) {
             // key 的关系是：当前用户id + 好友id
             let key = action.type === SEND_CHAT_MSG ? `${chatMsg.id}${chatMsg.to_id}` : `${chatMsg.to_id}${chatMsg.id}`;
             messList[key] = messList[key] ? [...messList[key], chatMsg] : [chatMsg];
+            if (action.type === SEND_CHAT_MSG) {
+                sendMsg(chatMsg, chatMsg.id, chatMsg.to_id)
+            }
             return {
                 chatUserInfo: state.chatUserInfo,
                 messList

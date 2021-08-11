@@ -5,7 +5,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const baseUrl = ''
+const baseUrl = 'http://127.0.0.1:9001'
 export default function ajax(url, data = {}, type = 'POST') {
     url = baseUrl + url
     data["token"] = Cookies.get('token')
@@ -19,6 +19,6 @@ export default function ajax(url, data = {}, type = 'POST') {
         }
         return axios.get(url + '?' + paramStr)
     } else {
-        return axios.post(url, data)
+        return axios.post(url, data, {headers:{xapi:123}})
     }
 }

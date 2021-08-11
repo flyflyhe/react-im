@@ -1,7 +1,7 @@
 import { message as AM, notification } from 'antd'
 
 import store from '../redux/store'
-import { modifyContacts } from '../redux/actions'
+import { modifyContacts, recvChatMsg } from '../redux/actions'
 import message from '../pages/chat/message/message'
 
 let socket = null
@@ -31,8 +31,13 @@ function websocket(user) {
                 const username = fromUser.username
                 AM.success(`message：${username}: ${content}`)
 
-                var contacts = store.getState().user.contacts
-                store.dispatch(modifyContacts(contacts))
+                store.dispatch(recvChatMsg({
+                    id: fromUser.uid,
+                    to_id: toUser.uid,
+                    avatar: "",
+                    message: content,
+                    position: "left"
+                }))
                 break
             case "private":
                 var contacts = store.getState().user.contacts

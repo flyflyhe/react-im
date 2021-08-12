@@ -75,7 +75,7 @@ class ChatTextarea extends Component {
         // sendMsg(message, chatUserInfo.id)
 
         // 这是自己的消息
-        let { user: {userInfo, contacts} } = this.props
+        let { user: {userInfo} } = this.props
         this.props.pushChatMsg({
             id: userInfo.id,
             to_id: chatUserInfo.id,
@@ -84,27 +84,28 @@ class ChatTextarea extends Component {
             position: "right"
         })
 
-        const randomText = ["工具人一号为您服务～", `你好，我是${chatUserInfo.nickname}，很高兴认识你`, "oh god，你终于想起我了啊", "明天一起去爬山露营啊，有空吗？", "hello，我现在在工作，你呢？", "🌹🌹 怎么说呢，那就在一起吧～"]
-        const lastMessage = randomText[parseInt(Math.random()*randomText.length)]
-        this.props.recvChatMsg({
-            id: chatUserInfo.id,
-            to_id: userInfo.id,
-            avatar: chatUserInfo.avatar,
-            message: lastMessage,
-            position: "left"
-        })
 
-        if(contacts) {
-            const index = contacts.findIndex(user => user.id === chatUserInfo.id)
-            if(index >= 0) {
-                contacts[index].last_mess = lastMessage;
-                contacts[index].time = "刚刚"
-                if(index > 0) {
-                    contacts.unshift(contacts.splice(index, 1)[0])
-                }
-                this.props.modifyContacts(contacts)
-            }
-        }
+        //const randomText = ["工具人一号为您服务～", `你好，我是${chatUserInfo.nickname}，很高兴认识你`, "oh god，你终于想起我了啊", "明天一起去爬山露营啊，有空吗？", "hello，我现在在工作，你呢？", "🌹🌹 怎么说呢，那就在一起吧～"]
+        //const lastMessage = randomText[parseInt(Math.random()*randomText.length)]
+        // this.props.recvChatMsg({
+        //     id: chatUserInfo.id,
+        //     to_id: userInfo.id,
+        //     avatar: chatUserInfo.avatar,
+        //     message: lastMessage,
+        //     position: "left"
+        // })
+
+        // if(contacts) {
+        //     const index = contacts.findIndex(user => user.id === chatUserInfo.id)
+        //     if(index >= 0) {
+        //         contacts[index].last_mess = lastMessage;
+        //         contacts[index].time = "刚刚"
+        //         if(index > 0) {
+        //             contacts.unshift(contacts.splice(index, 1)[0])
+        //         }
+        //         this.props.modifyContacts(contacts)
+        //     }
+        // }
     }
 }
 
